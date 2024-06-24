@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:missing/cubit/singup/sign_up_state.dart';
 import 'package:missing/screens/signin_page.dart';
 import 'package:missing/screens/welcome_screen.dart';
+
+import '../cubit/singup/sign_up_cubit.dart';
 
 class SignUP extends StatefulWidget {
   const SignUP({super.key});
@@ -11,9 +15,10 @@ class SignUP extends StatefulWidget {
 
 class _SignUPState extends State<SignUP> {
   bool isChecked = false;
+
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: const Color(
@@ -84,7 +89,7 @@ class _SignUPState extends State<SignUP> {
           Center(
             child: Column(
               children: [
-                 const Padding(
+                const Padding(
                   padding: EdgeInsets.only(
                     top: 200,
                   ),
@@ -118,6 +123,9 @@ class _SignUPState extends State<SignUP> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 15),
                       child: TextFormField(
+                        controller: context
+                            .read<SignupCubit>()
+                            .nameController,
                         decoration: const InputDecoration(
                             border: InputBorder.none,
                             hintText: "Name",
@@ -151,6 +159,9 @@ class _SignUPState extends State<SignUP> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 15),
                       child: TextFormField(
+                        controller: context
+                            .read<SignupCubit>()
+                            .emailController,
                         decoration: const InputDecoration(
                             border: InputBorder.none,
                             hintText: "Email ",
@@ -163,7 +174,7 @@ class _SignUPState extends State<SignUP> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 25),
+                  padding: const EdgeInsets.only(top: 8),
                   child: Container(
                     height: 55,
                     width: 300,
@@ -184,6 +195,10 @@ class _SignUPState extends State<SignUP> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 15),
                       child: TextFormField(
+                        controller:
+                        context
+                            .read<SignupCubit>()
+                            .passwordController,
                         decoration: const InputDecoration(
                             border: InputBorder.none,
                             hintText: "Password",
@@ -196,7 +211,43 @@ class _SignUPState extends State<SignUP> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 15, left: 50),
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Container(
+                    height: 55,
+                    width: 300,
+                    decoration: BoxDecoration(
+                      color: const Color(0XFFD9D9D9),
+                      borderRadius: const BorderRadius.all(Radius.circular(40)),
+                      border: Border.all(color: const Color(0XFF080FB4)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0XFF000000).withOpacity(0.25),
+                          spreadRadius: 0,
+                          blurRadius: 7,
+                          offset:
+                          const Offset(4, 10), // changes position of shadow
+                        ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 15),
+                      child: TextFormField(
+                        controller: context
+                            .read<SignupCubit>()
+                            .passwordConfirmationController,
+                        decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            hintText: "Confirm Password",
+                            hintStyle: TextStyle(
+                                color: Color(0XFF080FB4),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400)),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8, left: 50),
                   child: Row(
                     children: [
                       SizedBox(
@@ -225,48 +276,75 @@ class _SignUPState extends State<SignUP> {
                               fontSize: 15),
                         ),
                       ),
-
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 15),
-                  child: GestureDetector(
-                    onTap:  (){
-                     Navigator.push(context, MaterialPageRoute(builder: (context){
+                BlocConsumer<SignupCubit, SignupState>(
+                  builder: (context, state) {
+                    return GestureDetector(
+                      onTap: () {
+                        context.read<SignupCubit>().emitSignupStates();
+                        print("CLICKED");
+                        /*Navigator.push(context, MaterialPageRoute(builder: (context){
                       return const WelcomeScreen();
-                      }));
-                     },
-                    child: Container(
-                      height: 55,
-                      width: 200,
-                      decoration: BoxDecoration(
-                        color: const Color(0XFF080FB4),
-                        borderRadius: const BorderRadius.all(Radius.circular(40)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0XFF000000).withOpacity(0.25),
-                            spreadRadius: 0,
-                            blurRadius: 7,
-                            offset:
-                            const Offset(4, 10), // changes position of shadow
-                          ),
-                        ],
-                      ),
-                      child: const Center(
-                          child: Text(
-                            'Sign Up ',
-                            style: TextStyle(
-                              fontSize: 19,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0XFFFFFFFF),
+                      }));*/
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        height: 55,
+                        width: 200,
+                        decoration: BoxDecoration(
+                          color: const Color(0XFF080FB4),
+                          borderRadius:
+                          const BorderRadius.all(Radius.circular(40)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0XFF000000).withOpacity(0.25),
+                              spreadRadius: 0,
+                              blurRadius: 7,
+                              offset: const Offset(
+                                  4, 10), // changes position of shadow
                             ),
-                          )),
-                    ),
-                  ),
+                          ],
+                        ),
+                        child: const Center(
+                            child: Text(
+                              'Sign Up ',
+                              style: TextStyle(
+                                fontSize: 19,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0XFFFFFFFF),
+                              ),
+                            )),
+                      ),
+                    );
+                  },
+                  listener: (context, state) {
+                    state.whenOrNull(
+                      signupLoading: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) =>
+                          const Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.blue,
+                            ),
+                          ),
+                        );
+                      },
+                      signupSuccess: (signupResponse) {
+                        Navigator.push(context, MaterialPageRoute(builder: (
+                            context) => const SignIn(),));
+                      },
+                      signupError: (error) {
+                       print(error.toString());
+                      },
+                    );
+                    ;
+                  },
                 ),
                 const Padding(
-                  padding: EdgeInsets.only(left: 115, top: 30),
+                  padding: EdgeInsets.only(left: 115, top: 10),
                   child: Row(
                     children: [
                       Text(
@@ -303,7 +381,8 @@ class _SignUPState extends State<SignUP> {
                   padding: const EdgeInsets.only(left: 135, top: 20),
                   child: Row(
                     children: [
-                      GestureDetector(child: Image.asset('assets/facebook.png')),
+                      GestureDetector(
+                          child: Image.asset('assets/facebook.png')),
                       Padding(
                         padding: const EdgeInsets.only(left: 70),
                         child: GestureDetector(
@@ -315,9 +394,7 @@ class _SignUPState extends State<SignUP> {
               ],
             ),
           )
-
         ],
-
       ),
     );
   }
